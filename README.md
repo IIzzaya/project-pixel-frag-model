@@ -23,6 +23,22 @@ npm start
 
 `npm start` 运行已经构建的生产 Worker。开发环境在 HTTP localhost 下也可以尝试 WebGPU；部署使用 HTTPS。浏览器没有可用的 WebGPU adapter 时，Three.js 自动回退 WebGL 2，页面显示实际使用的后端。
 
+## 部署
+
+线上地址：**https://iizzaya.github.io/project-pixel-frag-model/**（GitHub Pages，纯静态产物）。
+
+管线：push 到 `main` → `.github/workflows/deploy.yml`（npm ci → typecheck → test → `vinext build` → `npm run prerender` → 上传 `dist/client/project-pixel-frag-model/` → deploy-pages）。
+
+由于 vinext 的 `basePath` 与 `output: 'export'` 不能同用，静态化由 `scripts/prerender.mjs` 完成：启动构建出的 Worker（`wrangler dev`），抓取 SSR HTML 冻结为静态 `index.html` / `404.html`，并把 `public/` 资源复制进产物目录。`next.config.ts` 设置 `basePath: '/project-pixel-frag-model'`；JSX 与 metadata 中对 `public/` 资源的引用通过 `lib/paths.ts` 的 `BASE_PATH` 常量手工加前缀（vinext 不改写这些引用；`<Link>` 则相反，必须传不带前缀的路径）。
+
+本地完整自检：
+
+```sh
+npm run typecheck && npm test && npm run lint
+npm run build && npm run prerender
+npx http-server dist/client   # 冒烟测试 /project-pixel-frag-model/ 子路径
+```
+
 ## 交互
 
 - 鼠标或单指拖动：环绕模型；滚轮或双指：缩放。

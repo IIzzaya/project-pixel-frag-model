@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/dialog';
 import type { SceneStats } from '@/lib/scene';
 import type { Form } from '@/lib/voxel-model';
+import { BASE_PATH } from '@/lib/paths';
 import Link from 'next/link';
 const subscribeMotion = (callback: () => void) => {
   const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -167,6 +168,7 @@ export default function Home() {
   return (
     <div className={`studio-page ${isShadow ? 'shadow-form' : ''}`}>
       <header className="site-header">
+        {/* vinext 的 <Link> 自身会给应用内路径加 basePath（withBasePath 不查重），必须传不带前缀的路径 */}
         <Link href="/" className="brand" aria-label="FRAG 首页">
           <span className="brand-symbol" aria-hidden="true">
             <i />
@@ -560,10 +562,10 @@ export default function Home() {
             原始参考视频 ·
             @ARTOFSULLY。此页面为基于视频的三维再创作，模型使用程序化体素构建。
           </DialogDescription>
-          <video controls playsInline preload="metadata" src="/ref.mp4">
+          <video controls playsInline preload="metadata" src={`${BASE_PATH}/ref.mp4`}>
             <track
               kind="captions"
-              src="/reference.vtt"
+              src={`${BASE_PATH}/reference.vtt`}
               srcLang="zh"
               label="画面描述"
             />
